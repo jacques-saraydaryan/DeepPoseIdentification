@@ -2,7 +2,7 @@
 
 ## Objective
 
-Detect human positions on 2D camera using OpenPose. Classify people on images according to their degree of attention (focus or distract) though a neural network. The aim is to create a pipeline from jpeg images to be able to labelise images depending on people's attention for security purposes.   
+Detect human positions on 2D camera using OpenPose. Classify people on images according to their degree of attention (focus or distract) though a neural network. The aim is to create a pipeline from jpeg images to be able to labelise images depending on people's attention for security purposes.
 
 ## Dataset
 
@@ -18,12 +18,34 @@ We are using TFLearn to construct our deepLearning algorithm.
 
 ## TO DO
 
-[x] Create and organise dataset 
+[x] Create and organise dataset
 [x] Detect OpenPose positions from images (through Ros service)
-[x] Preprocess OpenPose data to create input matrix 
+[x] Preprocess OpenPose data to create input matrix
 [ ] Prototype classification with sklearn (machine learning)
 [ ] Build a NN
 
+## Install
+
+First let's get the [OpenPose Service](https://github.com/jacques-saraydaryan/ros-openpose) to perform pose detection.
+Then just clone the projet using:
+
+```
+$ git clone https://github.com/Pierre-Assemat/DeepPoseIdentification.git
+```
+
+## Run
+
+First activate the service Openpose using ROS by running:
+
+```
+$ roslaunch openpose_ros_node serviceReadyTest.launch
+```
+
+Once you get there, run the python script `RosOpenPoseFiles.py` with 2 arguments:
+
+- `pathInput`: Path to folder containing the image dataset.
+
+- `pathOutput`: Path to output folder where the json files will be created.
 
 ## Contribution
 

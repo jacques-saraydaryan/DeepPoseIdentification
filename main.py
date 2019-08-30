@@ -1,22 +1,22 @@
-#import rospy
+from processsing import Processing
+from training import Training
 
-import processsing
-import RosOpenPoseFiles
+if __name__ == '__main__':
+    # Get argument parser
+    #parser = argparse.ArgumentParser(description='Chain of focus detection using human pose detection')
+    #parser.add_argument('--no-openpose', type=bool, default=False, help='Flag to skip pose detection step')
 
+    ## Start detection chain for training
 
-## Start detection chain for training
+    pathOutput = '../openPoseDataset/'
 
-pathInput = './imageDataset'
-pathOutput = './openPoseDataset'
+    # Concat all the positions data into a single array and save it as pickle file
+    process = Processing()
+    data = process.createInputMatrix(pathOutput)
 
-# Detect human position using OpenPose and save result in json file tree structure
-try:
-    RosOpenPoseFiles.LoadImgAndPublish(pathInput, pathOutput)
-except rospy.ROSInterruptException:
-    pass
+    # Construct the Neural Network classifier and start the learning phase
+    training = Training(data)
+    net = training.buildNN(5)
 
-# Concat all the positions data into a single array and save it as pickle file
-processsing.createInputMatrix(pathOutput)
-
-# Construct the Neural Network classifier and start the learning phase
-# TODO
+    # Train the Neural Network
+    training.train(net)

@@ -20,19 +20,19 @@ parser.add_argument('pathInput', type=str, default = './../imageDataset', help='
 parser.add_argument('pathOutput', type=str, default = './../openPoseDataset', help='Enter output path to save json files')
 
 # Convert ROS position object into python dict
-def ConvertRes(res):
+def ConvertRes(res, w, h):
     results_list = []
     for i in range(len(res)):
         body_part = [ {'part_id': res[i].body_part[j].part_id,
                 'x': res[i].body_part[j].x,
                 'y': res[i].body_part[j].y,
                 'confidence': res[i].body_part[j].confidence } for j in range(len(res[i].body_part))]
-        results_list.append({'body_part': body_part, 'face_landmark': res[i].face_landmark})
+        results_list.append({'body_part': body_part, 'face_landmark': res[i].face_landmark, 'imageSize': { 'width': w, 'height': h }})
     return results_list
 
 # Load image, detect human position and save results as json file
 def LoadImg(pathOutput, _bridge):
-    print('Loading images...')
+    
     # TODO: Change this hard coded folder name to avoid futur errors
     for image in os.listdir(pathOutput.replace('openPoseDataset', 'imageDataset')):
         image_path = os.path.join(pathOutput.replace('openPoseDataset', 'imageDataset'), image)
@@ -40,7 +40,8 @@ def LoadImg(pathOutput, _bridge):
         if (os.path.isfile(image_path)):
             img_loaded2 = cv2.imread(image_path)
             msg_im2 = _bridge.cv2_to_imgmsg(img_loaded2, encoding="bgr8")
-
+            h = msg_img2.size().height
+            w = msg_img2.size().width
             # Call service to learn people pose
             rospy.wait_for_service('people_pose_from_img')
 
@@ -51,7 +52,7 @@ def LoadImg(pathOutput, _bridge):
                 # Save position data as json file
                 json_name = os.path.splitext(pathOutput + '/' + str(image))[0] + '.json'
                 print(json_name)
-                res = ConvertRes(resp3.personList.persons)
+                res = ConvertRes(resp3.personList.persons, w, h)
 
                 with open(json_name, 'w') as f:
                     f.write(json.dumps(res))
@@ -75,6 +76,7 @@ def LoadImgAndPublish(pathInput, pathOutput):
     result_folders = []
 
     # Get hierarchy of input path to copy on output path
+    print('Loading images...')
     for folder in [x[0] for x in os.walk(pathInput)]:
         if (folder.endswith('distract') or folder.endswith('focus')):
             splitted = folder.split("/")[-2:]
@@ -89,8 +91,7 @@ def LoadImgAndPublish(pathInput, pathOutput):
                 os.mkdir(result_folder)
             LoadImg(result_folder, _bridge)
 
-    # Spin
-    rospy.spin()
+    
 
 if __name__ == '__main__':
     args = parser.parse_args()
@@ -101,3 +102,6 @@ if __name__ == '__main__':
         LoadImgAndPublish(pathInput, pathOutput)
     except rospy.ROSInterruptException:
         pass
+
+    # Spin
+    rospy.spin()

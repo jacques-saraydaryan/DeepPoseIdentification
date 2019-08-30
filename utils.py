@@ -17,7 +17,7 @@ def renameFiles(path):
 
     for i, file_path in enumerate(files):
         newFileName = 'img' + str(i) + os.path.splitext(file_path)[1]
-        dest = os.path.join(ntpath.dirname(file_path), newFileName)
+        dest = os.path.join(os.path.dirname(file_path), newFileName)
         print(os.path.basename(file_path) , " -> ", newFileName)
         os.rename(file_path, dest)
 

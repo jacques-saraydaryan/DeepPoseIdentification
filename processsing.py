@@ -12,10 +12,10 @@ SOURCE = ['google', 'perso']
 
 # Import argument
 parser = argparse.ArgumentParser(description='Create the input matrix to feed the neural network')
-parser.add_argument('--path',type=str,default = './../openPoseDataset/',help='Enter folder root path of the position dataset')
+parser.add_argument('--path', type=str, default = './../openPoseDataset/', help='Enter folder root path of the position dataset')
 
 def createInputMatrix(path):
-    files = [f for f in glob.glob(path + "**/*.*",recursive=True)]
+    files = [f for f in glob.glob(path + "**/*.*", recursive=True)]
     data = []
     print('Process the following json files :\n')
     for i, json_path in enumerate(files):
@@ -38,6 +38,7 @@ def createInputMatrix(path):
             personList.append(LABEL.index(label))
             personList.append(SOURCE.index(source))
             data.append(personList)
+
     # Create pickle file with the input matrix
     with open('data.pkl', 'wb') as f:
         pickle.dump(data, f)

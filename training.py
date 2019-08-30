@@ -32,12 +32,16 @@ testY = np.array(pd.get_dummies(testY))
 
 # Building deep neural network
 input_layer = tflearn.input_data(shape=[None, 54])
-dense1 = tflearn.fully_connected(input_layer, 64, activation='tanh',
+dense1 = tflearn.fully_connected(input_layer, 64, activation='relu',
                                  regularizer='L2', weight_decay=0.001)
 dropout1 = tflearn.dropout(dense1, 0.8)
-dense2 = tflearn.fully_connected(dropout1, 64, activation='tanh',
+dense2 = tflearn.fully_connected(dropout1, 64, activation='relu',
                                  regularizer='L2', weight_decay=0.001)
 dropout2 = tflearn.dropout(dense2, 0.8)
+dense3 = tflearn.fully_connected(dropout2, 64, activation='relu',
+                                 regularizer='L2', weight_decay=0.001)
+
+dropout2 = tflearn.dropout(dense3, 0.8)
 softmax = tflearn.fully_connected(dropout2, 2, activation='softmax')
 
 # Regression using SGD with learning rate decay and Top-3 accuracy

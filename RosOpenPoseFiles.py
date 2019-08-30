@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-__author__ ='Jacques Saraydaryan'
+__author__ ='Jacques Saraydaryan, Nina Tubau Ribera, Pierre Assemat'
 
 import rospy
 import cv2
@@ -84,9 +84,9 @@ def LoadImgAndPublish(pathInput, pathOutput):
             # Create folder if it does not exist
             if not(os.path.exists(result_folder)):
                 first_folder = separator.join(result_folder.split("/")[:-1])
-            if not(os.path.exists(first_folder)):
-                os.mkdir(first_folder)
-            os.mkdir(result_folder)
+                if not(os.path.exists(first_folder)):
+                    os.mkdir(first_folder)
+                os.mkdir(result_folder)
             LoadImg(result_folder, _bridge)
 
     # Spin

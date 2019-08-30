@@ -32,7 +32,7 @@ def ConvertRes(res):
 
 # Load image, detect human position and save results as json file
 def LoadImg(pathOutput, _bridge):
-    print('Loading images...')
+    
     # TODO: Change this hard coded folder name to avoid futur errors
     for image in os.listdir(pathOutput.replace('openPoseDataset', 'imageDataset')):
         image_path = os.path.join(pathOutput.replace('openPoseDataset', 'imageDataset'), image)
@@ -75,6 +75,7 @@ def LoadImgAndPublish(pathInput, pathOutput):
     result_folders = []
 
     # Get hierarchy of input path to copy on output path
+    print('Loading images...')
     for folder in [x[0] for x in os.walk(pathInput)]:
         if (folder.endswith('distract') or folder.endswith('focus')):
             splitted = folder.split("/")[-2:]
@@ -89,8 +90,7 @@ def LoadImgAndPublish(pathInput, pathOutput):
                 os.mkdir(result_folder)
             LoadImg(result_folder, _bridge)
 
-    # Spin
-    rospy.spin()
+    
 
 if __name__ == '__main__':
     args = parser.parse_args()
@@ -101,3 +101,6 @@ if __name__ == '__main__':
         LoadImgAndPublish(pathInput, pathOutput)
     except rospy.ROSInterruptException:
         pass
+
+    # Spin
+    rospy.spin()

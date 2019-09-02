@@ -16,10 +16,11 @@ if __name__ == '__main__':
     # Concat all the positions data into a single array and save it as pickle file
     process = Processing()
     data = process.createInputMatrix(pathOutput)
+    data = process.standardise(data)
 
     # Construct the Neural Network classifier and start the learning phase
     training = Training(data)
-    net = training.buildNN(5)
+    net = training.buildNN(2)
 
     # Train the Neural Network
     training.train(net)

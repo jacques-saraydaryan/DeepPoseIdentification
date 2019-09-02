@@ -44,10 +44,6 @@ class Processing():
                 personList.append(self.LABEL.index(label))
                 data.append(personList)
 
-        # Create pickle file with the input matrix
-        with open('data.pkl', 'wb') as f:
-            pickle.dump(data, f)
-
         return data
 
     def standardise(self, dataset):
@@ -55,23 +51,29 @@ class Processing():
         """
         
         #Separate in two datasets: with label 0 and label 1
-        data = np.array(dataset)[:-3]
-        print(data.shape)
-        X_0 = data[data[:,-1]==0]
-        X_1 = data[data[:,-1]==1]
+        data = np.array(dataset)
 
-        scaler0 = preprocessing.StandardScaler().fit(X_0)
-        X_0 = scaler0.transform(X_0)
+        #filter on labels
+        X_0 = data[data[:, -1]==0]
+        X_1 = data[data[:, -1]==1]
 
-        scaler1 = preprocessing.StandardScaler().fit(X_1)
-        X_1 = scaler1.transform(X_1)
-
-        print(X_0.mean, X_1.mean)
-        print(X_0.std, X_1.std)
-
+        X_0LS = X_0[:, -2:] 
+        X_1LS = X_1[:, -2:] 
         
+        #data = np.array(dataset)[:,:-3]
 
-        return dataset
+        scaler0 = preprocessing.StandardScaler().fit(X_0[:,:-2])
+        X_0 = np.concatenate((scaler0.transform(X_0[:,:-2]), X_0LS),axis=1)
+
+        scaler1 = preprocessing.StandardScaler().fit(X_1[:,:-2])
+        X_1 = np.concatenate((scaler1.transform(X_1[:,:-2]), X_1LS),axis=1)
+
+        dataset_standardised = np.concatenate((X_0,X_1),axis=0)
+        # Create pickle file with the input matrix
+        with open('data.pkl', 'wb') as f:
+            pickle.dump(dataset_standardised, f)
+
+        return dataset_standardised
 
 
 
@@ -86,5 +88,6 @@ if __name__ == '__main__':
     process = Processing()
     dataset = process.createInputMatrix(path)
 
-    process.standardise(dataset)
+    dataset = process.standardise(dataset)
+
 

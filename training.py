@@ -12,18 +12,18 @@ class Training():
 
     def __init__(self, data):
         # Data loading and preprocessing
-        if (data):
+        if (data.any()):
             dataset = data
         else:
             dataset = pd.read_pickle('data.pkl')
         # Remove extra data in dataset such as "source"
         # TODO: Update it with new column images size
+        
         self.X = np.array(dataset)[:, :-2]
         self.y = np.array(dataset)[:, -1]
 
     def buildNN(self, hiddenLayerNumber=2):
         # Building deep neural network
-        print(self.X.shape)
         input_layer = tflearn.input_data(shape=[None, 54])
         dense = tflearn.fully_connected(input_layer, 54, activation='relu',
                                         regularizer='L2', weight_decay=0.001)
@@ -37,8 +37,9 @@ class Training():
 
         # Regression using SGD with learning rate decay and Top-3 accuracy
         sgd = tflearn.SGD(learning_rate=0.1, lr_decay=0.96, decay_step=1000)
-        top_k = tflearn.metrics.Top_k(1)
-        net = tflearn.regression(softmax, optimizer=sgd, metric=top_k,
+        acc = tflearn.metrics.accuracy()
+        #top_k = tflearn.metrics.Top_k(1)
+        net = tflearn.regression(softmax, optimizer=sgd, metric=acc,
                                 loss='categorical_crossentropy')
         return net
 
@@ -50,5 +51,5 @@ class Training():
 
         # Training
         model = tflearn.DNN(net, tensorboard_verbose=0)
-        model.fit(X, Y, n_epoch=20, validation_set=(testX, testY), show_metric=True, run_id="dense_model")
+        model.fit(X, Y, n_epoch=200, validation_set=(testX, testY), show_metric=True, run_id="dense_model")
 

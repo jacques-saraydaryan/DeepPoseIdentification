@@ -2,6 +2,7 @@ import json
 import pickle
 import glob
 import argparse
+import numpy as np
 from sklearn import preprocessing
 
 # Run on Python 3 only
@@ -54,15 +55,21 @@ class Processing():
         """
         
         #Separate in two datasets: with label 0 and label 1
-        data = np.array(dataset)[:-1]
-        X_0 = data[data[:,-1]==0][:,:-3]
-        X_1 = data[data[:,-1]==1][:,:-3]
+        data = np.array(dataset)[:-3]
+        print(data.shape)
+        X_0 = data[data[:,-1]==0]
+        X_1 = data[data[:,-1]==1]
 
         scaler0 = preprocessing.StandardScaler().fit(X_0)
         X_0 = scaler0.transform(X_0)
 
         scaler1 = preprocessing.StandardScaler().fit(X_1)
         X_1 = scaler1.transform(X_1)
+
+        print(X_0.mean, X_1.mean)
+        print(X_0.std, X_1.std)
+
+        
 
         return dataset
 
@@ -77,5 +84,7 @@ if __name__ == '__main__':
     path = args.path
 
     process = Processing()
-    process.createInputMatrix(path)
+    dataset = process.createInputMatrix(path)
+
+    process.standardise(dataset)
 

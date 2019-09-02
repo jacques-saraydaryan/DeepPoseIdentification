@@ -2,6 +2,7 @@ import json
 import pickle
 import glob
 import argparse
+from sklearn import preprocessing
 
 # Run on Python 3 only
 # the recursive option of the glob module is not available on Python 2
@@ -48,6 +49,25 @@ class Processing():
 
         return data
 
+    def standardise(self, dataset):
+        """Standardise data 
+        """
+        
+        #Separate in two datasets: with label 0 and label 1
+        data = np.array(dataset)[:-1]
+        X_0 = data[data[:,-1]==0][:,:-3]
+        X_1 = data[data[:,-1]==1][:,:-3]
+
+        scaler0 = preprocessing.StandardScaler().fit(X_0)
+        X_0 = scaler0.transform(X_0)
+
+        scaler1 = preprocessing.StandardScaler().fit(X_1)
+        X_1 = scaler1.transform(X_1)
+
+        return dataset
+
+
+
 if __name__ == '__main__':
     # Import argument
     parser = argparse.ArgumentParser(description='Create the input matrix to feed the neural network')
@@ -58,3 +78,4 @@ if __name__ == '__main__':
 
     process = Processing()
     process.createInputMatrix(path)
+

@@ -24,18 +24,18 @@ class Training():
     def buildNN(self, hiddenLayerNumber=5):
         # Building deep neural network
         input_layer = tflearn.input_data(shape=[None, 54])
-        dense = tflearn.fully_connected(input_layer, 54, activation='relu',
+        dense = tflearn.fully_connected(input_layer, 54, activation='LeakyReLU',
                                         regularizer='L2', weight_decay=0.001)
         for i in range(hiddenLayerNumber):
-            dropout = tflearn.dropout(dense, 0.8)
-            dense = tflearn.fully_connected(dropout, 54, activation='relu',
+            dropout = tflearn.dropout(dense, 0.99)
+            dense = tflearn.fully_connected(dropout, 54, activation='LeakyReLU',
                                             regularizer='L2', weight_decay=0.001)
 
-        dropout = tflearn.dropout(dense, 0.8)
+        dropout = tflearn.dropout(dense, 0.99)
         softmax = tflearn.fully_connected(dropout, 2, activation='softmax')
 
         # Regression using SGD with learning rate decay and Top-3 accuracy
-        sgd = tflearn.SGD(learning_rate=0.1, lr_decay=0.96, decay_step=1000)
+        sgd = tflearn.SGD(learning_rate=0.01, lr_decay=0.96, decay_step=1000)
         acc = tflearn.metrics.accuracy()
         #top_k = tflearn.metrics.Top_k(1)
         net = tflearn.regression(softmax, optimizer=sgd, metric=acc,
@@ -49,8 +49,8 @@ class Training():
         testY = np.array(pd.get_dummies(testY))
 
         # Training
-        model = tflearn.DNN(net, tensorboard_verbose=0)
-        model.fit(X, Y, n_epoch=50, validation_set=(testX, testY), show_metric=True, run_id="dense_model")
+        model = tflearn.DNN(net, checkpoint_path = './tensorboard/tflearn_logs/', tensorboard_dir='./tensorboard/', tensorboard_verbose=0)
+        model.fit(X, Y, n_epoch=500, validation_set=(testX, testY), show_metric=True, run_id="dense_model")
 
         model.save('./DNN.tflearn')
 
@@ -71,6 +71,6 @@ if __name__ == '__main__':
     # Construct the Neural Network classifier and start the learning phase
     training = Training(data)
     net = training.buildNN(5)
-
+        
     # Train the Neural Network
     training.train(net)

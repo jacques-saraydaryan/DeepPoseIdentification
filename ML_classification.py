@@ -56,14 +56,16 @@ def plot_ROC(X_test,y_test,clf):
 
 
 
-def classificatio_test(X_train, X_test, y_train, y_test):
+def classificatio_test(X_train, X_test, y_train, y_test,X_topredict):
     PLOT_ROC=False
 
-    names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
+    names_bis = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
              "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
              "Naive Bayes", "QDA"]
 
-    classifiers = [
+    names = ["Neural Net"]
+
+    classifiers_bis = [
         SVC(kernel="linear", C=0.025),
         SVC(gamma=2, C=1),
         GaussianProcessClassifier(1.0 * RBF(1.0)),
@@ -74,6 +76,8 @@ def classificatio_test(X_train, X_test, y_train, y_test):
         GaussianNB(),
         QuadraticDiscriminantAnalysis()]
 
+    classifiers = [MLPClassifier(alpha=1, max_iter=1000)]
+
     # iterate over classifiers and print results
     for name, clf in zip(names, classifiers):
         clf.fit(X_train, y_train)
@@ -83,7 +87,7 @@ def classificatio_test(X_train, X_test, y_train, y_test):
             plot_ROC(X_test,y_test,clf)
         #y_pred = clf.predict(X_test)
         #conf_matrix = confusion_matrix(y_test,y_pred)
-
+        print(clf.predict(X_topredict))
     
 def tsne_proj(dataset):
     #TSNE projection 
@@ -111,5 +115,12 @@ def tsne_proj(dataset):
 if __name__ == '__main__':
 
     X_train, X_test, y_train, y_test, dataset = load_data('data.pkl')
-    classificatio_test(X_train, X_test, y_train, y_test)
+    dataset_2 = pd.read_pickle('data_test.pkl')
+    print(dataset_2)
+    X_topredict = np.array(dataset_2)[:,:-2]
+    print(X_topredict)
+    # = np.array(dataset_2)[:,-1] 
+    #print(X,'#######',y)
+
+    classificatio_test(X_train, X_test, y_train, y_test,X_topredict)
     tsne_proj(dataset)

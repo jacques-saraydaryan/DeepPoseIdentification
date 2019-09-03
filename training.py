@@ -1,28 +1,27 @@
-# -*- coding: utf-8 -*-
-
+import argparse
 import tflearn
 import pickle
 import pandas as pd
 import numpy as np
 
 from sklearn.model_selection import train_test_split
+from processsing import Processing
 
 
 class Training():
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         # Data loading and preprocessing
         if (data.any()):
             dataset = data
         else:
             dataset = pd.read_pickle('data.pkl')
         # Remove extra data in dataset such as "source"
-        # TODO: Update it with new column images size
         
         self.X = np.array(dataset)[:, :-2]
         self.y = np.array(dataset)[:, -1]
 
-    def buildNN(self, hiddenLayerNumber=2):
+    def buildNN(self, hiddenLayerNumber=5):
         # Building deep neural network
         input_layer = tflearn.input_data(shape=[None, 54])
         dense = tflearn.fully_connected(input_layer, 54, activation='relu',
@@ -53,3 +52,25 @@ class Training():
         model = tflearn.DNN(net, tensorboard_verbose=0)
         model.fit(X, Y, n_epoch=200, validation_set=(testX, testY), show_metric=True, run_id="dense_model")
 
+        model.save('DNN.tflearn')
+
+if __name__ == '__main__':
+
+    # Get argument parser
+    parser = argparse.ArgumentParser(description='Chain of focus detection using human pose detection')
+    parser.add_argument('path', type=str, default='../openPoseDataset/', help='Path to input json dataset')
+    args = parser.parse_args()
+
+    ## Start detection chain for training
+
+    # Concat all the positions data into a single array and save it as pickle file
+    process = Processing()
+    data = process.createInputMatrix(args.path)
+    data = process.standardise(data)
+
+    # Construct the Neural Network classifier and start the learning phase
+    training = Training(data)
+    net = training.buildNN(5)
+
+    # Train the Neural Network
+    training.train(net)

@@ -18,11 +18,17 @@ We are using TFLearn to construct our deepLearning algorithm.
 
 ## TO DO
 
-[x] Create and organise dataset
-[x] Detect OpenPose positions from images (through Ros service)
-[x] Preprocess OpenPose data to create input matrix
-[ ] Prototype classification with sklearn (machine learning)
-[ ] Build a NN
+- [x] Create and organise dataset
+
+- [x] Detect OpenPose positions from images (through Ros service)
+
+- [x] Preprocess OpenPose data to create input matrix
+
+- [x] Prototype classification with sklearn (machine learning)
+
+- [x] Build a Neural Network
+
+- [ ] Train it
 
 ## Install
 
@@ -46,6 +52,16 @@ Once you get there, run the python script `RosOpenPoseFiles.py` with 2 arguments
 - `pathInput`: Path to folder containing the image dataset.
 
 - `pathOutput`: Path to output folder where the json files will be created.
+
+# Display metrics with TensorBoard
+
+Once the training step is done, run the following command where `path/to/tfevents` is `tensorboard/dense_model` in our case:
+
+```
+$ tensorboard --logdir='path/to/tfevents'
+```
+
+Then open your browser on `localhost:6006`
 
 ## Contribution
 

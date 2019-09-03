@@ -14,8 +14,9 @@ class Processing():
         # Constants
         self.LABEL = ['focus', 'distract']
         self.SOURCE = ['google', 'perso']
+        self.BODY_PART_INDEX = [0, 1, 2, 3, 4, 5, 6, 7, 14, 15, 16, 17]
 
-    def createInputMatrix(self, path):
+    def createInputMatrix(self, path, discardLowBodyPart=False):
         files = [f for f in glob.glob(path + "**/*.*", recursive=True)]
         data = []
         print('Process the following json files :\n')
@@ -35,10 +36,15 @@ class Processing():
                 w = json_positions[i]['imageSize']['width']
                 h = json_positions[i]['imageSize']['height']
 
-                for j in range(len(json_positions[i]['body_part'])):
-                    personList.append(json_positions[i]['body_part'][j]['x'] / w)
-                    personList.append(json_positions[i]['body_part'][j]['y'] / h)
-                    personList.append(json_positions[i]['body_part'][j]['confidence'])
+                if discardLowBodyPart:
+                    bodyParts = [json_positions[i]['body_part'][j] for j in self.BODY_PART_INDEX]
+                else:
+                    bodyParts = json_positions[i]['body_part']
+
+                for j in range(len(bodyParts)):
+                    personList.append(bodyParts[j]['x'] / w)
+                    personList.append(bodyParts[j]['y'] / h)
+                    personList.append(bodyParts[j]['confidence'])
 
                 personList.append(self.SOURCE.index(source))
                 personList.append(self.LABEL.index(label))

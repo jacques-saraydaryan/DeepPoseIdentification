@@ -20,18 +20,19 @@ class Training():
         
         self.X = np.array(dataset)[:, :-2]
         self.y = np.array(dataset)[:, -1]
+        self.featureNb = self.X.shape[1]
 
     def buildNN(self, hiddenLayerNumber=5):
         # Building deep neural network
-        input_layer = tflearn.input_data(shape=[None, 54])
-        dense = tflearn.fully_connected(input_layer, 54, activation='LeakyReLU',
+        input_layer = tflearn.input_data(shape=[None, self.featureNb])
+        dense = tflearn.fully_connected(input_layer, self.featureNb, activation='LeakyReLU',
                                         regularizer='L2', weight_decay=0.001)
         for i in range(hiddenLayerNumber):
-            dropout = tflearn.dropout(dense, 0.99)
-            dense = tflearn.fully_connected(dropout, 54, activation='LeakyReLU',
+            dropout = tflearn.dropout(dense, 0.8)
+            dense = tflearn.fully_connected(dropout, self.featureNb, activation='LeakyReLU',
                                             regularizer='L2', weight_decay=0.001)
 
-        dropout = tflearn.dropout(dense, 0.99)
+        dropout = tflearn.dropout(dense, 0.8)
         softmax = tflearn.fully_connected(dropout, 2, activation='softmax')
 
         # Regression using SGD with learning rate decay and Top-3 accuracy
@@ -42,7 +43,7 @@ class Training():
                                 loss='categorical_crossentropy')
         return net
 
-    def train(self, net):
+    def train(self, net, epochNb):
         #split data between train and test
         X, testX, Y, testY = train_test_split(self.X, self.y, test_size=.2, random_state=42)
         Y = np.array(pd.get_dummies(Y))
@@ -50,7 +51,7 @@ class Training():
 
         # Training
         model = tflearn.DNN(net, checkpoint_path = './tensorboard/tflearn_logs/', tensorboard_dir='./tensorboard/', tensorboard_verbose=0)
-        model.fit(X, Y, n_epoch=500, validation_set=(testX, testY), show_metric=True, run_id="dense_model")
+        model.fit(X, Y, n_epoch=epochNb, batch_size=64, validation_set=(testX, testY), show_metric=True, run_id="dense_model")
 
         model.save('./DNN.tflearn')
 
@@ -59,18 +60,22 @@ if __name__ == '__main__':
     # Get argument parser
     parser = argparse.ArgumentParser(description='Chain of focus detection using human pose detection')
     parser.add_argument('--path', type=str, default='../openPoseDataset/', help='Path to input json dataset')
+    parser.add_argument('--epochNb', type=int, default=100, help='Number of epoch wanted to train the NN')
     args = parser.parse_args()
 
     ## Start detection chain for training
 
+    # Discard some of the lower body part to be more precise
+    discardLowBodyPart = True
+
     # Concat all the positions data into a single array and save it as pickle file
     process = Processing()
-    data = process.createInputMatrix(args.path)
+    data = process.createInputMatrix(args.path, discardLowBodyPart)
     data = process.standardise(data)
 
     # Construct the Neural Network classifier and start the learning phase
     training = Training(data)
-    net = training.buildNN(5)
+    net = training.buildNN(10)
         
     # Train the Neural Network
-    training.train(net)
+    training.train(net, args.epochNb)

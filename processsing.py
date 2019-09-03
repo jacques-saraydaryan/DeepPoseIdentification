@@ -60,13 +60,13 @@ class Processing():
         X_0LS = X_0[:, -2:] 
         X_1LS = X_1[:, -2:] 
         
-        #data = np.array(dataset)[:,:-3]
+        if X_0.size:
+            scaler0 = preprocessing.StandardScaler().fit(X_0[:,:-2])
+            X_0 = np.concatenate((scaler0.transform(X_0[:,:-2]), X_0LS),axis=1)
 
-        scaler0 = preprocessing.StandardScaler().fit(X_0[:,:-2])
-        X_0 = np.concatenate((scaler0.transform(X_0[:,:-2]), X_0LS),axis=1)
-
-        scaler1 = preprocessing.StandardScaler().fit(X_1[:,:-2])
-        X_1 = np.concatenate((scaler1.transform(X_1[:,:-2]), X_1LS),axis=1)
+        if X_1.size:
+            scaler1 = preprocessing.StandardScaler().fit(X_1[:,:-2])
+            X_1 = np.concatenate((scaler1.transform(X_1[:,:-2]), X_1LS),axis=1)
 
         dataset_standardised = np.concatenate((X_0,X_1),axis=0)
         # Create pickle file with the input matrix

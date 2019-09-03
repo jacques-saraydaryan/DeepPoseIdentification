@@ -5,9 +5,6 @@ import argparse
 # Run on Python 3 only
 # The recursive mode of glob is not available on python 2
 
-# Get external argument
-parser = argparse.ArgumentParser(description="Rename all the file from a folder")
-parser.add_argument('folder_path', type=str, help='Enter folder path')
 
 # Recursive rename of files from the path parameter
 def renameFiles(path):
@@ -22,6 +19,10 @@ def renameFiles(path):
         os.rename(file_path, dest)
 
 if __name__ == '__main__':
+    # Get external argument
+    parser = argparse.ArgumentParser(description="Rename all the file from a folder")
+    parser.add_argument('folder_path', type=str, help='Enter folder path')
+
     args = parser.parse_args()
     path = args.folder_path
 

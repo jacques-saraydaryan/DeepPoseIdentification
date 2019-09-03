@@ -12,7 +12,7 @@ class Training():
 
     def __init__(self, data=None):
         # Data loading and preprocessing
-        if (data.any()):
+        if data is not None and data.any():
             dataset = data
         else:
             dataset = pd.read_pickle('data.pkl')
@@ -50,15 +50,15 @@ class Training():
 
         # Training
         model = tflearn.DNN(net, tensorboard_verbose=0)
-        model.fit(X, Y, n_epoch=200, validation_set=(testX, testY), show_metric=True, run_id="dense_model")
+        model.fit(X, Y, n_epoch=50, validation_set=(testX, testY), show_metric=True, run_id="dense_model")
 
-        model.save('DNN.tflearn')
+        model.save('./DNN.tflearn')
 
 if __name__ == '__main__':
 
     # Get argument parser
     parser = argparse.ArgumentParser(description='Chain of focus detection using human pose detection')
-    parser.add_argument('path', type=str, default='../openPoseDataset/', help='Path to input json dataset')
+    parser.add_argument('--path', type=str, default='../openPoseDataset/', help='Path to input json dataset')
     args = parser.parse_args()
 
     ## Start detection chain for training

@@ -15,8 +15,8 @@ from openpose_ros_srvs.srv import DetectPeoplePoseFromImg
 
 # Get argument parser
 parser = argparse.ArgumentParser(description='Read images and convert into json file with OpenPose positions')
-parser.add_argument('pathInput', type=str, default = './../imageDataset', help='Enter input folder with images')
-parser.add_argument('pathOutput', type=str, default = './../openPoseDataset', help='Enter output path where to save json files')
+parser.add_argument('--pathInput', type=str, default = './../imageDataset', help='Enter input folder with images')
+parser.add_argument('--pathOutput', type=str, default = './../openPoseDataset', help='Enter output path where to save json files')
 
 # Convert ROS position object into python dict
 def ConvertRes(res, w, h):

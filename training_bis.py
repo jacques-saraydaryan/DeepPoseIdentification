@@ -1,7 +1,7 @@
 import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import numpy as np
-
+import argparse
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -49,13 +49,12 @@ class Training():
 		#Compiling the neural network
 		self.classifier.compile(optimizer ='adam', loss='binary_crossentropy', metrics =['accuracy'])
 
-
-	def train(self):	
-		logdir = "tensorboard/Keras_model/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+	def train(self, epochNb=300):
+		logdir = "tensorboard/keras_model/" + datetime.now().strftime("%Y%m%d-%H%M%S")
 		tensorboard_callback = TensorBoard(log_dir=logdir)
 
 		#Fitting the data to the training dataset
-		self.history = self.classifier.fit(self.X_train, self.y_train, validation_split=0.33, batch_size=10, epochs=50, verbose=0,callbacks=[tensorboard_callback])
+		self.history = self.classifier.fit(self.X_train, self.y_train, validation_split=0.33, batch_size=10, epochs=epochNb, verbose=0,callbacks=[tensorboard_callback])
 
 		return self.history
 
@@ -90,10 +89,16 @@ class Training():
 		self.plot_loss()
 
 if __name__ == '__main__':
-	training = Training(name_pickle='openPoseDataset.pkl')
-	training.split_data()
-	training.buildDNN()
-	training.train()
-	training.plot_all()
+    # Get argument parser
+    parser = argparse.ArgumentParser(description='Chain of focus detection using human pose detection')
+    parser.add_argument('--path', type=str, default='../openPoseDataset/', help='Path to input json dataset')
+    parser.add_argument('--epochNb', type=int, default=300, help='Number of epoch wanted to train the NN')
+    args = parser.parse_args()
+
+    training = Training(name_pickle='openPoseDataset.pkl')
+    training.split_data()
+    training.buildDNN()
+    training.train(args.epochNb)
+	#training.plot_all()
 
 

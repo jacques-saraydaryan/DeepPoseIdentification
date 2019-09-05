@@ -12,7 +12,7 @@ class Training():
 
     def __init__(self, data=None):
         # Data loading and preprocessing
-        if data is not None and data.any():
+        if data is not None or data.any():
             dataset = data
         else:
             dataset = pd.read_pickle('data.pkl')
@@ -22,24 +22,25 @@ class Training():
         self.y = np.array(dataset)[:, -1]
         self.featureNb = self.X.shape[1]
 
-    def buildNN(self, hiddenLayerNumber=5):
+    def buildNN(self, hiddenLayerNumber=3):
         # Building deep neural network
         input_layer = tflearn.input_data(shape=[None, self.featureNb])
-        dense = tflearn.fully_connected(input_layer, self.featureNb, activation='LeakyReLU',
+        dense = tflearn.fully_connected(input_layer, self.featureNb, activation='tanh',
                                         regularizer='L2', weight_decay=0.001)
         for i in range(hiddenLayerNumber):
             dropout = tflearn.dropout(dense, 0.8)
-            dense = tflearn.fully_connected(dropout, self.featureNb, activation='LeakyReLU',
+            dense = tflearn.fully_connected(dropout, self.featureNb, activation='tanh', bias=True,
                                             regularizer='L2', weight_decay=0.001)
 
         dropout = tflearn.dropout(dense, 0.8)
-        softmax = tflearn.fully_connected(dropout, 2, activation='softmax')
+        softmax = tflearn.fully_connected(dropout, 2, activation='softmax', bias=True)
+        logistic = tflearn.fully_connected(dropout, 2, activation='sigmoid', bias=True)
 
         # Regression using SGD with learning rate decay and Top-3 accuracy
         sgd = tflearn.SGD(learning_rate=0.01, lr_decay=0.96, decay_step=1000)
         acc = tflearn.metrics.accuracy()
         #top_k = tflearn.metrics.Top_k(1)
-        net = tflearn.regression(softmax, optimizer=sgd, metric=acc,
+        net = tflearn.regression(logistic, optimizer=sgd, metric=acc,
                                 loss='categorical_crossentropy')
         return net
 
@@ -50,8 +51,8 @@ class Training():
         testY = np.array(pd.get_dummies(testY))
 
         # Training
-        model = tflearn.DNN(net, checkpoint_path = './tensorboard/tflearn_logs/', tensorboard_dir='./tensorboard/', tensorboard_verbose=0)
-        model.fit(X, Y, n_epoch=epochNb, batch_size=64, validation_set=(testX, testY), show_metric=True, run_id="dense_model")
+        model = tflearn.DNN(net, tensorboard_dir='./tensorboard/', tensorboard_verbose=0)
+        model.fit(X, Y, n_epoch=epochNb, batch_size=32, validation_set=(testX, testY), validation_batch_size=32, show_metric=True, run_id="dense_model", shuffle=True)
 
         model.save('./DNN.tflearn')
 
@@ -60,7 +61,7 @@ if __name__ == '__main__':
     # Get argument parser
     parser = argparse.ArgumentParser(description='Chain of focus detection using human pose detection')
     parser.add_argument('--path', type=str, default='../openPoseDataset/', help='Path to input json dataset')
-    parser.add_argument('--epochNb', type=int, default=100, help='Number of epoch wanted to train the NN')
+    parser.add_argument('--epochNb', type=int, default=500, help='Number of epoch wanted to train the NN')
     args = parser.parse_args()
 
     ## Start detection chain for training
@@ -71,11 +72,12 @@ if __name__ == '__main__':
     # Concat all the positions data into a single array and save it as pickle file
     process = Processing()
     data = process.createInputMatrix(args.path, discardLowBodyPart)
-    data = process.standardise(data)
+    pickleFileName = args.path.split('/')[-2] + '.pkl'
+    data = process.standardise(data, pickleFileName)
 
     # Construct the Neural Network classifier and start the learning phase
     training = Training(data)
-    net = training.buildNN(10)
+    net = training.buildNN(4)
         
     # Train the Neural Network
     training.train(net, args.epochNb)

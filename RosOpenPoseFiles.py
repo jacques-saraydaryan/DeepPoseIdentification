@@ -15,8 +15,8 @@ from openpose_ros_srvs.srv import DetectPeoplePoseFromImg
 
 # Get argument parser
 parser = argparse.ArgumentParser(description='Read images and convert into json file with OpenPose positions')
-parser.add_argument('--pathInput', type=str, default = './../imageDataset', help='Enter input folder with images')
-parser.add_argument('--pathOutput', type=str, default = './../openPoseDataset', help='Enter output path where to save json files')
+parser.add_argument('--input', type=str, default = './../imageDataset', help='Enter input folder path with images')
+parser.add_argument('--output', type=str, default = './../openPoseDataset', help='Enter output folder path where to save json files')
 
 # Convert ROS position object into python dict
 def ConvertRes(res, w, h):
@@ -97,8 +97,8 @@ def LoadImgAndPublish(pathInput, pathOutput):
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    pathInput = args.pathInput
-    pathOutput = args.pathOutput
+    pathInput = args.input
+    pathOutput = args.output
 
     try:
         LoadImgAndPublish(pathInput, pathOutput)

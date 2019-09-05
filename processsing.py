@@ -52,14 +52,11 @@ class Processing():
 
         return data
 
-    def standardise(self, dataset):
-        """Standardise data 
-        """
-        
-        #Separate in two datasets: with label 0 and label 1
+    def standardise(self, dataset, pickleFileName):
+        # Separate in two datasets: with label 0 and label 1
         data = np.array(dataset)
 
-        #filter on labels
+        # Filter on labels
         X_0 = data[data[:, -1]==0]
         X_1 = data[data[:, -1]==1]
 
@@ -68,15 +65,15 @@ class Processing():
         
         if X_0.size:
             scaler0 = preprocessing.StandardScaler().fit(X_0[:,:-2])
-            X_0 = np.concatenate((scaler0.transform(X_0[:,:-2]), X_0LS),axis=1)
+            X_0 = np.concatenate((scaler0.transform(X_0[:,:-2]), X_0LS), axis=1)
 
         if X_1.size:
             scaler1 = preprocessing.StandardScaler().fit(X_1[:,:-2])
-            X_1 = np.concatenate((scaler1.transform(X_1[:,:-2]), X_1LS),axis=1)
+            X_1 = np.concatenate((scaler1.transform(X_1[:,:-2]), X_1LS), axis=1)
 
-        dataset_standardised = np.concatenate((X_0,X_1),axis=0)
+        dataset_standardised = np.concatenate((X_0,X_1), axis=0)
         # Create pickle file with the input matrix
-        with open('data.pkl', 'wb') as f:
+        with open(pickleFileName, 'wb') as f:
             pickle.dump(dataset_standardised, f)
 
         return dataset_standardised
@@ -87,13 +84,14 @@ if __name__ == '__main__':
     # Import argument
     parser = argparse.ArgumentParser(description='Create the input matrix to feed the neural network')
     parser.add_argument('--path', type=str, default = './../openPoseDataset/', help='Enter folder root path of the position dataset')
+    parser.add_argument('--discardLowBodyPart', type=bool, default = False, help='Flag to discard low body part')
 
     args = parser.parse_args()
-    path = args.path
 
+    # Create vector
     process = Processing()
-    dataset = process.createInputMatrix(path)
+    dataset = process.createInputMatrix(args.path)
 
-    dataset = process.standardise(dataset)
-
-
+    # Standardise vector
+    pickleFileName = args.path.split('/')[-2] + '.pkl'
+    dataset = process.standardise(dataset, pickleFileName)

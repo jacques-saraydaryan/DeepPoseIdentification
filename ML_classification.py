@@ -39,7 +39,7 @@ def load_data(pickle_file):
 
     return X_train, X_test, y_train, y_test, dataset 
 
-def plot_ROC(X_test,y_test,clf):
+def plot_ROC(X_test,y_test,clf,X_to):
     y_score = clf.predict_proba(X_test)
     fpr, tpr, thresholds = roc_curve(y_test,y_score[:,1])
     plt.figure()
@@ -63,7 +63,7 @@ def classificatio_test(X_train, X_test, y_train, y_test,X_topredict):
              "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
              "Naive Bayes", "QDA"]
 
-    names = ["Neural Net"]
+    names = ["Gaussian Process"]
 
     classifiers_bis = [
         SVC(kernel="linear", C=0.025),
@@ -76,10 +76,10 @@ def classificatio_test(X_train, X_test, y_train, y_test,X_topredict):
         GaussianNB(),
         QuadraticDiscriminantAnalysis()]
 
-    classifiers = [MLPClassifier(alpha=1, max_iter=1000)]
+    classifiers = [GaussianProcessClassifier(1.0 * RBF(1.0))]
 
     # iterate over classifiers and print results
-    for name, clf in zip(names, classifiers):
+    for name, clf in zip(names_bis, classifiers_bis):
         clf.fit(X_train, y_train)
         score = clf.score(X_test, y_test)
         print('Accuracy for',name,'is: ',score)
@@ -114,13 +114,17 @@ def tsne_proj(dataset):
  
 if __name__ == '__main__':
 
-    X_train, X_test, y_train, y_test, dataset = load_data('data.pkl')
-    dataset_2 = pd.read_pickle('data_test.pkl')
-    print(dataset_2)
+    X_train, X_test, y_train, y_test, dataset = load_data('openPoseDatasetDiscriminative.pkl')
+    print(X_train.shape)
+    dataset_2 = pd.read_pickle('data_test3.pkl')
+    print(dataset_2.shape)
     X_topredict = np.array(dataset_2)[:,:-2]
-    print(X_topredict)
+    X_topredict_label = np.array(dataset_2)[:,-1]
+    print(X_topredict_label)
+    #print('Ground truth',np.array(dataset_2)[:,-1])
+    #print(X_topredict)
     # = np.array(dataset_2)[:,-1] 
     #print(X,'#######',y)
 
-    classificatio_test(X_train, X_test, y_train, y_test,X_topredict)
+    classificatio_test(X_train, X_test, y_train, y_test, X_topredict)
     tsne_proj(dataset)

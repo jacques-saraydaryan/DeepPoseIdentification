@@ -5,11 +5,13 @@ import numpy as np
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+from datetime import datetime
 
 from keras import Sequential
 from keras.layers import Dense, Dropout
 from keras.regularizers import l2
 from keras.constraints import unit_norm
+from keras.callbacks import TensorBoard
 
 class Training():
 
@@ -49,8 +51,11 @@ class Training():
 
 
 	def train(self):	
+		logdir = "tensorboard/Keras_model/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+		tensorboard_callback = TensorBoard(log_dir=logdir)
+
 		#Fitting the data to the training dataset
-		self.history = self.classifier.fit(self.X_train, self.y_train, validation_split=0.33, batch_size=10, epochs=50)
+		self.history = self.classifier.fit(self.X_train, self.y_train, validation_split=0.33, batch_size=10, epochs=50, verbose=0,callbacks=[tensorboard_callback])
 
 		return self.history
 

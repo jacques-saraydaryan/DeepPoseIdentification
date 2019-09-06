@@ -56,25 +56,36 @@ class Processing():
         # Separate in two datasets: with label 0 and label 1
         data = np.array(dataset)
 
+        print('Mean : ' + str(data[:, :-2].mean(0)))
+        print('STD : ' + str(data[:, :-2].std(0)))
+
+        with open('mean_std.pkl', 'wb') as f:
+            pickle.dump([data[:,:-2].mean(0), data[:, :-2].std(0)], f, 2)
+
+        # dataSL = data[:, -2:]
+        # scaler = preprocessing.StandardScaler().fit(data[:, :-2])
+        # dataset_standardised = np.concatenate((scaler.transform(data[:, :-2]), dataSL), axis=1)
+        
         # Filter on labels
         X_0 = data[data[:, -1]==0]
         X_1 = data[data[:, -1]==1]
 
-        X_0LS = X_0[:, -2:] 
-        X_1LS = X_1[:, -2:] 
+        X_0LS = X_0[:, -2:]
+        X_1LS = X_1[:, -2:]
         
         if X_0.size:
-            scaler0 = preprocessing.StandardScaler().fit(X_0[:,:-2])
-            X_0 = np.concatenate((scaler0.transform(X_0[:,:-2]), X_0LS), axis=1)
+            scaler0 = preprocessing.StandardScaler().fit(X_0[:, :-2])
+            X_0 = np.concatenate((scaler0.transform(X_0[:, :-2]), X_0LS), axis=1)
 
         if X_1.size:
-            scaler1 = preprocessing.StandardScaler().fit(X_1[:,:-2])
-            X_1 = np.concatenate((scaler1.transform(X_1[:,:-2]), X_1LS), axis=1)
+            scaler1 = preprocessing.StandardScaler().fit(X_1[:, :-2])
+            X_1 = np.concatenate((scaler1.transform(X_1[:, :-2]), X_1LS), axis=1)
 
-        dataset_standardised = np.concatenate((X_0,X_1), axis=0)
+        dataset_standardised = np.concatenate((X_0, X_1), axis=0)
+        
         # Create pickle file with the input matrix
         with open(pickleFileName, 'wb') as f:
-            pickle.dump(dataset_standardised, f)
+            pickle.dump(dataset_standardised, f, 2)
 
         return dataset_standardised
 

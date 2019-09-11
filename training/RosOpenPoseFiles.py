@@ -15,11 +15,16 @@ from openpose_ros_srvs.srv import DetectPeoplePoseFromImg
 
 # Get argument parser
 parser = argparse.ArgumentParser(description='Read images and convert into json file with OpenPose positions')
-parser.add_argument('--input', type=str, default = './../imageDataset', help='Enter input folder path with images')
-parser.add_argument('--output', type=str, default = './../openPoseDataset', help='Enter output folder path where to save json files')
+parser.add_argument('--input', type=str, default = './../imageDataset/', help='Enter input folder path with images')
+parser.add_argument('--output', type=str, default = './../openPoseDataset/', help='Enter output folder path where to save json files')
 
 # Convert ROS position object into python dict
 def ConvertRes(res, w, h):
+    '''Convert result from OpenPose, Person object, into a json format
+    Input: result from OpenPose, width and height of image
+    Output: Json format of person 
+    '''
+
     results_list = []
     for i in range(len(res)):
         body_part = [{
@@ -39,6 +44,9 @@ def ConvertRes(res, w, h):
 
 # Load image, detect human position and save results as json file
 def LoadImg(pathOutput, pathInput, _bridge):
+    '''Read images, get OpenPose object related to the image and write into Json file
+    Input: Path input images, path output for json files, _bridge
+    '''
     for image in os.listdir(pathInput):
         image_path = os.path.join(pathInput, image)
 
@@ -68,6 +76,9 @@ def LoadImg(pathOutput, pathInput, _bridge):
 
 
 def LoadImgAndPublish(pathInput, pathOutput):
+    '''Write json files of input image depending on the input arborescence of the files
+    Input: input path of images, output path of json files
+    '''
     inputFolderName = pathInput.split('/')[-2]
     outputFolderName = pathOutput.split('/')[-2]
 

@@ -1,0 +1,24 @@
+### Work in progress
+
+# ML_classification.py:
+
+Visualisation of the data through TSNE projection
+
+Prototype of several machine learning methods such as:
+
+- ada boost
+- random forest
+- Perceptron neural net
+- KNN
+- SVC
+- Gaussian process classifier
+- Decision tree classifier
+- Gaussian Naive Bayes
+- Quadratic discriminant analysis
+
+Goal: Gain some insight on the data
+
+# training.py:
+
+First Neural network made with tflearn. But no results at all.
+The program does not learn during the training process.

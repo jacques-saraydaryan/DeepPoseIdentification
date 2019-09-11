@@ -14,11 +14,19 @@ from cv_bridge import CvBridge, CvBridgeError
 from openpose_ros_msgs.msg import Persons, PersonDetection
 from openpose_ros_srvs.srv import DetectPeoplePoseFromImg
 
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
+
 from prediction_bis import Prediction
 
 class ProcessFocusUnfocusData():
 
     def __init__(self):
+        ''' Initialise ProcessFocusUnfocusData class by subscribing to 2 Ros channels:
+        Persons: joint Pose stream  
+        Image: Raw image stream
+        '''
         self._bridge = CvBridge()
         self.currentImage = None
 
@@ -28,6 +36,8 @@ class ProcessFocusUnfocusData():
         rospy.Subscriber("/openpose/image_raw", Image, self.processOpenPoseImgData)
 
     def processOpenPoseJsonData(self, personObject):
+        '''Callback run each time a new json position joints is received
+        '''
         # Callback when openpose output received
         rospy.loginfo('[OPENPOSE_JSON] received data:')
 
@@ -54,15 +64,49 @@ class ProcessFocusUnfocusData():
 
         # Predict classes
         predictionObject = Prediction()
+
         data = predictionObject.preprocess(json_positions)
+
         predictions = predictionObject.predict(data)
-        print(predictions)
+        # print(predictions)
 
         predictions = predictionObject.predictClasses(data)
+
+        fig, ax = plt.subplots(1)
+        ax.imshow(self.currentImage)
+
         for i in range(len(predictions)):
             print('Person %s' %str(i+1) + ' - ' + predictionObject.LABEL[predictions[i][0]])
+            rect = self.postProcess(json_positions[i], int(predictions[i]))
+            ax.add_patch(rect)
+        plt.show()
+
+
+    def postProcess(self, json_positions, predictions):
+        
+        color = ['g','r']
+
+        x_ear = json_positions['body_part'][16]['x']
+        y_ear = json_positions['body_part'][16]['y']
+
+        y_nose = json_positions['body_part'][0]['y']
+
+        x_neck = json_positions['body_part'][1]['x']
+        y_neck = json_positions['body_part'][1]['y']
+
+        x_0 = x_ear
+        y_0 = y_ear + (y_nose-y_neck)
+
+        width = 2*(x_neck-x_ear)
+        height = 2*(y_ear-y_neck)
+
+        rect = patches.Rectangle((x_0,y_0), width, height, linewidth=3, edgecolor =color[predictions],facecolor='none')
+        return rect
+
 
     def processOpenPoseImgData(self, data):
+        '''Callback run each time a raw image is received
+        '''
         frame = self._bridge.imgmsg_to_cv2(data, 'bgr8')
         rospy.loginfo('[OPENPOSE_IMAGE] received img:')
         self.currentImage = frame

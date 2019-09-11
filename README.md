@@ -49,22 +49,28 @@ First activate the service Openpose using ROS by running:
 $ roslaunch openpose_ros_node serviceReadyTest.launch
 ```
 
-To add more images in the dataset, you can rename the images using `utils.py`. 
-(Be aware, the rename function can overwrite images and loose some of them in the process)
+To add more images in the dataset, you can rename the images using `training/utils.py`. 
+(It can only be run with Python 3. Be aware, the rename function can overwrite images and loose some of them in the process. Use a mask to be sure to avoid any overwritting).
 
-Then run the python script `RosOpenPoseFiles.py` with 2 arguments:
+Then run the python script `training/RosOpenPoseFiles.py` with 2 arguments:
 
-- `--input`: Path to folder containing the image dataset.
+- `--input`: Path to the folder containing the image dataset.
 
-- `--output`: Path to output folder where the json files will be created.
+- `--output`: Path to the output folder where the json files will be created.
 
-Then by running `training.py` with the argument:
+Once you get there, run the preprocess step with `training/process.py` with 2 arguments:
 
-- `--path`: Path to openPose dataset folder which contains all the json files.
+- `--path`: Path to the folder containing all the joints position as json files.
+
+- `--discardLowBodyPart`: Flag indicating if you want to discard all the lower joins from the features.
+
+Then by running `training/training_bis.py` with the argument:
+
+- `--path`: Path to the openPose dataset pickle file.
 
 - `--epochNb`: The number of epoch you want your network to learn.
 
-You will train your network. Once you get there, the model will be saved. 
+You will train your network. Once you get there, the model will be saved as `model.json`, `model.h5` and the best weights for loss optimization will be saved as `weights.best.hdf5`. 
 
 ### Display learning metrics with TensorBoard
 
@@ -76,8 +82,17 @@ $ tensorboard --logDir="tensorboard/keras_model/[date of learning]"
 
 And open your browser on `http://localhost:6006/`, you will be able to see all the metrics of the neural network learning.
 
+### Run the prediction chain with testing data as input
 
-## Run the prediction chain
+Simply run the following command:
+
+```
+$ python predictions/prediction_bis.py
+```
+
+This is requiering the file `data_test.pkl` to be created. This file is created during the training step (within the `split_data methods`), once the full dataset is loaded and the separation between training/testing set is done.
+
+### Run the prediction chain with Video stream as input
 
 First activate the video stream ros service to send the stream on a channel using the command:
 
@@ -121,10 +136,10 @@ Pierre Assemat (Robotic Major)
 
 - [x] Train it
 
-- [ ] Connect the neural network to the processing chain
+- [x] Connect the neural network to the processing chain
 
-- [ ] Create the prediction chain
+- [x] Create the prediction chain
 
-- [ ] Connect the video stream to the prediction chain
+- [x] Connect the video stream to the prediction chain
 
-- [ ] Improve the dataset using corner cases
+- [x] Improve the dataset using corner cases

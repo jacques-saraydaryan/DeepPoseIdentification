@@ -16,6 +16,7 @@ from openpose_ros_srvs.srv import DetectPeoplePoseFromImg
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+import cv2
 
 
 from prediction_bis import Prediction
@@ -68,23 +69,19 @@ class ProcessFocusUnfocusData():
         data = predictionObject.preprocess(json_positions)
 
         predictions = predictionObject.predict(data)
-        # print(predictions)
 
         predictions = predictionObject.predictClasses(data)
 
-        fig, ax = plt.subplots(1)
-        ax.imshow(self.currentImage)
-
         for i in range(len(predictions)):
             print('Person %s' %str(i+1) + ' - ' + predictionObject.LABEL[predictions[i][0]])
-            rect = self.postProcess(json_positions[i], int(predictions[i]))
-            ax.add_patch(rect)
-        plt.show()
+            self.postProcess(json_positions[i], int(predictions[i]))
+     
 
 
-    def postProcess(self, json_positions, predictions):
+    def postProcess(self, json_positions, prediction):
         
-        color = ['g','r']
+        #green for focus and red for distract
+        color = [(0,255,0),(0,0,255)]
 
         x_ear = json_positions['body_part'][16]['x']
         y_ear = json_positions['body_part'][16]['y']
@@ -100,8 +97,10 @@ class ProcessFocusUnfocusData():
         width = 2*(x_neck-x_ear)
         height = 2*(y_ear-y_neck)
 
-        rect = patches.Rectangle((x_0,y_0), width, height, linewidth=3, edgecolor =color[predictions],facecolor='none')
-        return rect
+        cv2.rectangle(self.currentImage, (x_0,y_0), (x_0+width, y_0-height), color[prediction], 2)
+        cv2.imshow("Labelised image", self.currentImage)
+        cv2.waitKey(1)
+
 
 
     def processOpenPoseImgData(self, data):

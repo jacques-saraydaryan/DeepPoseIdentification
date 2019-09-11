@@ -18,7 +18,7 @@ The dataset comes from two different sources: internet and own images. Different
 
 ## Neural Network
 
-We are using Keras to construct our deepLearning algorithm.
+We are using Keras with tensorflow backend to build our deep learning algorithm.
 
 ### Choice of Neural network technolgy
 
@@ -31,8 +31,8 @@ TODO
 
 ## Install
 
-First let's get the [OpenPose Service](https://github.com/jacques-saraydaryan/ros-openpose) to perform pose detection.
-Then just clone the projet using:
+First let's get the [OpenPose Service](https://github.com/jacques-saraydaryan/ros-openpose) to perform the open pose detection.
+Then clone the projet using:
 
 ```
 $ git clone https://github.com/Pierre-Assemat/DeepPoseIdentification.git
@@ -41,7 +41,7 @@ $ git clone https://github.com/Pierre-Assemat/DeepPoseIdentification.git
 
 ## Run
 
-### Run the training chain
+### Data preparation and training chain
 
 First activate the service Openpose using ROS by running:
 
@@ -52,13 +52,13 @@ $ roslaunch openpose_ros_node serviceReadyTest.launch
 To add more images in the dataset, you can rename the images using `training/utils.py`. 
 (It can only be run with Python 3. Be aware, the rename function can overwrite images and loose some of them in the process. Use a mask to be sure to avoid any overwritting).
 
-Then run the python script `training/RosOpenPoseFiles.py` with 2 arguments:
+Then run the python (with Python 3) script `training/RosOpenPoseFiles.py` with 2 arguments:
 
 - `--input`: Path to the folder containing the image dataset.
 
 - `--output`: Path to the output folder where the json files will be created.
 
-Once you get there, run the preprocess step with `training/process.py` with 2 arguments:
+Once you get there, run the preprocess step `training/processing.py`  (with Python 3)  with 2 arguments:
 
 - `--path`: Path to the folder containing all the joints position as json files.
 
@@ -66,7 +66,7 @@ Once you get there, run the preprocess step with `training/process.py` with 2 ar
 
 Then by running `training/training_bis.py` with the argument:
 
-- `--path`: Path to the openPose dataset pickle file.
+- `--path`: Path to the openPose dataset pickle file created by processing.py.
 
 - `--epochNb`: The number of epoch you want your network to learn.
 
@@ -77,7 +77,7 @@ You will train your network. Once you get there, the model will be saved as `mod
 After the learning step, if you want to gain some insight, just run: 
 
 ```
-$ tensorboard --logDir="tensorboard/keras_model/[date of learning]"
+$ tensorboard --logdir="tensorboard/keras_model/[date of learning]"
 ```
 
 And open your browser on `http://localhost:6006/`, you will be able to see all the metrics of the neural network learning.
@@ -90,7 +90,7 @@ Simply run the following command:
 $ python predictions/prediction_bis.py
 ```
 
-This is requiering the file `data_test.pkl` to be created. This file is created during the training step (within the `split_data methods`), once the full dataset is loaded and the separation between training/testing set is done.
+This requieres the file `data_test.pkl` as input. This file is created during the training step (within the `split_data methods`), once the full dataset is loaded and the separation between training/testing set is done.
 
 ### Run the prediction chain with Video stream as input
 
@@ -114,7 +114,7 @@ rosrun rqt_image_view rqt_image_view
 
 ## Contribution
 
-Nina Tubau (Image Major)
+Nina Tubau Ribera (Image Major)
 Pierre Assemat (Robotic Major)
 
 

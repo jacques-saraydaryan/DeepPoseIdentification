@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score
 
 
 '''
-In order to use this file, you need to have the model save as 'model.json' and weight save as 'model.h5' in the same folder. 
+In order to use this file, you need to have the model save as 'model.json' and weight save as 'model.h5' in the same folder.
 '''
 
 class Prediction():
@@ -37,20 +37,20 @@ class Prediction():
     def preprocess(self, json_positions, discardLowBodyPart=False):
         '''Preprocess the data to predict from json files: normalise
         Input: Json files, option to chosse the joints to select discardLowBodyPart
-        Output: dataset of data to predict 
+        Output: dataset of data to predict
         '''
         data = []
 
         for person in range(len(json_positions)):
             personList = []
-            w = json_positions[person]['imageSize']['width']
-            h = json_positions[person]['imageSize']['height']
-            
+            w = json_positions[person]['image_size']['width']
+            h = json_positions[person]['image_size']['height']
+
             if discardLowBodyPart:
                 bodyParts = [json_positions[person]['body_part'][j] for j in self.BODY_PART_INDEX]
             else:
                 bodyParts = json_positions[person]['body_part']
-            
+
             for bodyPart in range(len(bodyParts)):
                 personList.append(bodyParts[bodyPart]['x'] / w)
                 personList.append(bodyParts[bodyPart]['y'] / h)
@@ -58,7 +58,6 @@ class Prediction():
             data.append(np.array(personList))
 
         return np.array(data)
-
 
     def predict(self, X):
         '''Predict the percentage of bellongging into class 1(distract) of each person (line) in the dataset
@@ -68,7 +67,7 @@ class Prediction():
         self.predictions = self.model.predict(X)
 
         return self.predictions
-    
+
     def predictClasses(self, X):
         '''Predict the label of each person (line) in the dataset
         Intput: dataset
@@ -96,12 +95,12 @@ if __name__ == '__main__':
     #     np.random.shuffle(data)
     #     y = data[:, -1].astype(int)
     #     x = data[:, :-2]
-        
+
     #     predictions = predictionObject.predict(x)
     #     print(predictions)
-        
+
     #     predictions = predictionObject.predictClasses(x)
     #     for i in range(len(predictions)):
     #         print('Person %s' %str(i+1) + ' - ' + predictionObject.LABEL[predictions[i][0]] + ' : ' + str(predictions[i]) + ' | ' + predictionObject.LABEL[y[i]])
-        
+
     #     print('Acc: ', accuracy_score(y, predictions))

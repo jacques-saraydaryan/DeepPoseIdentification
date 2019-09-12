@@ -17,7 +17,7 @@ class Training():
         else:
             dataset = pd.read_pickle('data.pkl')
         # Remove extra data in dataset such as "source"
-        
+
         self.X = np.array(dataset)[:, :-2]
         self.y = np.array(dataset)[:, -1]
         self.featureNb = self.X.shape[1]
@@ -78,6 +78,6 @@ if __name__ == '__main__':
     # Construct the Neural Network classifier and start the learning phase
     training = Training(data)
     net = training.buildNN(4)
-        
+
     # Train the Neural Network
     training.train(net, args.epochNb)

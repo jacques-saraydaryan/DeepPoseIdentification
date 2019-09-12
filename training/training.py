@@ -38,7 +38,7 @@ class Training():
 			pickle.dump([self.X_test, self.y_test] , f, 2)
 
 
-	def buildDNN(self, hidden_layers=2):
+	def buildDNN(self, hidden_layers=5):
 		'''Building the architecture of the network (perceptron)
 		Input: number of hidden layers
 		'''
@@ -52,7 +52,7 @@ class Training():
 		for nbLayer in range(hidden_layers - 1):
 			self.classifier.add(Dense(54, kernel_regularizer=l2(0.0007), bias_regularizer=l2(0.0007), activation='tanh', kernel_initializer='random_normal'))
 			self.classifier.add(Dropout(0.08))
-		
+
 		# Output Layer
 		self.classifier.add(Dense(1, activation='sigmoid', kernel_initializer='random_normal'))
 
@@ -63,17 +63,16 @@ class Training():
 			pass
 
 		# Optimizer
-
 		adam = optimizers.Adam(lr=0.001)
-		
+
 		# Compiling the neural network
 		self.classifier.compile(optimizer=adam, loss='binary_crossentropy', metrics =['accuracy'])
 
 
 	def train(self, epochNb=1000):
-		'''Train the network 
+		'''Train the network
 		Input: Number of epochs
-		Output: Save a json and h5 file with the weights 
+		Output: Save a json and h5 file with the weights
 		'''
 		logdir = "tensorboard/keras_model/" + datetime.now().strftime("%Y%m%d-%H%M%S")
 		tensorboard_callback = TensorBoard(log_dir=logdir)
@@ -91,7 +90,7 @@ class Training():
 		with open("model.json", "w") as f:
 			f.write(model_json)
 			f.close()
-		
+
 		# serialize weights to HDF5
 		self.classifier.save_weights("model.h5")
 		print("\nModel train and saved as 'model.json' and 'model.h5'")
@@ -140,11 +139,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Chain of focus detection using human pose detection')
     parser.add_argument('--path', type=str, default="./openPoseDataset.pkl", help='Path to input dataset pickle file')
     parser.add_argument('--epochNb', type=int, default=1000, help='Number of epoch wanted to train the NN')
+    parser.add_argument('--layerNb', type=int, default=5, help='Number of hidden layers')
     args = parser.parse_args()
 
     training = Training(args.path)
     training.split_data()
-    training.buildDNN(5)
+    training.buildDNN(args.epochNb)
     training.train(args.epochNb)
     training.plot_all()
 

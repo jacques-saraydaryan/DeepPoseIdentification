@@ -22,7 +22,7 @@ parser.add_argument('--output', type=str, default = './../openPoseDataset/', hel
 def ConvertRes(res, w, h):
     '''Convert result from OpenPose, Person object, into a json format
     Input: result from OpenPose, width and height of image
-    Output: Json format of person 
+    Output: Json format of person
     '''
 
     results_list = []
@@ -37,7 +37,7 @@ def ConvertRes(res, w, h):
         results_list.append({
             'body_part': body_part,
             'face_landmark': res[i].face_landmark,
-            'imageSize': { 'width': w, 'height': h }
+            'image_size': { 'width': w, 'height': h }
         })
 
     return results_list
@@ -104,7 +104,6 @@ def LoadImgAndPublish(pathInput, pathOutput):
             fullPathInput = label_folder.replace(outputFolderName, inputFolderName)
             LoadImg(label_folder, fullPathInput, _bridge)
 
-    
 
 if __name__ == '__main__':
     args = parser.parse_args()

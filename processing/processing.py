@@ -17,8 +17,8 @@ class Processing():
         self.BODY_PART_INDEX = [0, 1, 2, 3, 4, 5, 6, 7, 14, 15, 16, 17]
 
     def createInputMatrix(self, path, pickleFileName, discardLowBodyPart=False):
-        '''Creation of matrix with data from json file 
-        Input: path to json files, option to discard a part of the data 
+        '''Creation of matrix with data from json file
+        Input: path to json files, option to discard a part of the data
         Output: matrix with the whole dataset
         '''
 
@@ -38,8 +38,8 @@ class Processing():
             # Create the input matrix required for the neural network
             for i in range(len(json_positions)):
                 personList = []
-                w = json_positions[i]['imageSize']['width']
-                h = json_positions[i]['imageSize']['height']
+                w = json_positions[i]['image_size']['width']
+                h = json_positions[i]['image_size']['height']
 
                 if discardLowBodyPart:
                     bodyParts = [json_positions[i]['body_part'][j] for j in self.BODY_PART_INDEX]
@@ -54,7 +54,7 @@ class Processing():
                 personList.append(self.SOURCE.index(source))
                 personList.append(self.LABEL.index(label))
                 data.append(personList)
-        
+
         # Create pickle file with the input matrix
         with open(pickleFileName, 'wb') as f:
             pickle.dump(data, f, 2)
@@ -76,14 +76,14 @@ class Processing():
     #     # dataSL = data[:, -2:]
     #     # scaler = preprocessing.StandardScaler().fit(data[:, :-2])
     #     # dataset_standardised = np.concatenate((scaler.transform(data[:, :-2]), dataSL), axis=1)
-        
+
     #     # Filter on labels
     #     X_0 = data[data[:, -1]==0]
     #     X_1 = data[data[:, -1]==1]
 
     #     X_0LS = X_0[:, -2:]
     #     X_1LS = X_1[:, -2:]
-        
+
     #     if X_0.size:
     #         scaler0 = preprocessing.StandardScaler().fit(X_0[:, :-2])
     #         X_0 = np.concatenate((scaler0.transform(X_0[:, :-2]), X_0LS), axis=1)
@@ -93,13 +93,12 @@ class Processing():
     #         X_1 = np.concatenate((scaler1.transform(X_1[:, :-2]), X_1LS), axis=1)
 
     #     dataset_standardised = np.concatenate((X_0, X_1), axis=0)
-        
+
     #     # Create pickle file with the input matrix
     #     with open(pickleFileName, 'wb') as f:
     #         pickle.dump(dataset_standardised, f, 2)
 
     #     return dataset_standardised
-
 
 
 if __name__ == '__main__':
@@ -115,7 +114,6 @@ if __name__ == '__main__':
     # Create vector
     process = Processing()
     dataset = process.createInputMatrix(args.path, pickleFileName)
-
 
     # Standardise vector
     #dataset = process.standardise(dataset, pickleFileName)

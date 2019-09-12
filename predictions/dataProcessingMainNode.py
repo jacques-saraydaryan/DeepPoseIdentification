@@ -48,7 +48,7 @@ class ProcessFocusUnfocusData():
         
         json_positions = []
 
-        # Reconstruct a python dict to add imageSize on each person
+        # Reconstruct a python dict to add image_size on each person
         for i in range(len(personObject.persons)):
             bodyParts = []
             for j in range(len(personObject.persons[i].body_part)):
@@ -60,7 +60,7 @@ class ProcessFocusUnfocusData():
             json_positions.append({
                 "body_part": bodyParts,
                 "face_landmark": personObject.persons[i].face_landmark,
-                "imageSize": {"width": w, "height": h}
+                "image_size": {"width": w, "height": h}
             })
 
         # Predict classes

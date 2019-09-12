@@ -86,6 +86,7 @@ class ProcessFocusUnfocusData():
         x_ear = json_positions['body_part'][16]['x']
         y_ear = json_positions['body_part'][16]['y']
 
+        x_nose = json_positions['body_part'][0]['x']
         y_nose = json_positions['body_part'][0]['y']
 
         x_neck = json_positions['body_part'][1]['x']
@@ -94,8 +95,8 @@ class ProcessFocusUnfocusData():
         x_0 = x_ear
         y_0 = y_ear + (y_nose-y_neck)
 
-        width = 2*(x_neck-x_ear)
-        height = 2*(y_ear-y_neck)
+        width = 2*(x_nose-x_ear)
+        height = 2*(y_0-y_ear)
 
         cv2.rectangle(self.currentImage, (x_0,y_0), (x_0+width, y_0-height), color[prediction], 2)
         cv2.imshow("Labelised image", self.currentImage)

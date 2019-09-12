@@ -134,7 +134,7 @@ Pierre Assemat (Robotic Major)
 
 - [x] Build a Neural Network using Keras
 
-- [x] Train it
+- [x] Train it --> Efficient
 
 - [x] Connect the neural network to the processing chain
 

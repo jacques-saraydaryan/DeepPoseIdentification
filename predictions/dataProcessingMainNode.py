@@ -19,7 +19,7 @@ import matplotlib.patches as patches
 import cv2
 
 
-from prediction_bis import Prediction
+from prediction import Prediction
 
 class ProcessFocusUnfocusData():
 
@@ -35,6 +35,7 @@ class ProcessFocusUnfocusData():
 
         rospy.Subscriber("/openpose/pose", Persons, self.processOpenPoseJsonData)
         rospy.Subscriber("/openpose/image_raw", Image, self.processOpenPoseImgData)
+        self._output_image_pub=rospy.Publisher("/deep_pose_identification/image_output",Image)
 
     def processOpenPoseJsonData(self, personObject):
         '''Callback run each time a new json position joints is received
@@ -48,7 +49,7 @@ class ProcessFocusUnfocusData():
         
         json_positions = []
 
-        # Reconstruct a python dict to add image_size on each person
+        # Reconstruct a python dict to add imageSize on each person
         for i in range(len(personObject.persons)):
             bodyParts = []
             for j in range(len(personObject.persons[i].body_part)):
@@ -75,32 +76,40 @@ class ProcessFocusUnfocusData():
         for i in range(len(predictions)):
             print('Person %s' %str(i+1) + ' - ' + predictionObject.LABEL[predictions[i][0]])
             self.postProcess(json_positions[i], int(predictions[i]))
-     
+
+
+        ros_msg_image=self._bridge.cv2_to_imgmsg(self.currentImage,'bgr8')
+        self._output_image_pub.publish(ros_msg_image)
+        
+        #cv2.imshow("Labelised image", self.currentImage)
+        #cv2.waitKey(1)
 
 
     def postProcess(self, json_positions, prediction):
         
         #green for focus and red for distract
         color = [(0,255,0),(0,0,255)]
+        x=[]
+        y=[]
+       
+        for i in range(len(json_positions['body_part'])):
+            x_value = json_positions['body_part'][i]['x']
+            y_value = json_positions['body_part'][i]['y']
+            if(x_value!=0):
+                x.append(x_value)
+            if(y_value!=0):
+                y.append(y_value)
 
-        x_ear = json_positions['body_part'][16]['x']
-        y_ear = json_positions['body_part'][16]['y']
+        x_min = min (x)
+        x_max = max(x)
+        y_min = min(y)
+        y_max =  max(y)   
+        
+        width = x_max - x_min 
+        height = y_max - y_min
 
-        x_nose = json_positions['body_part'][0]['x']
-        y_nose = json_positions['body_part'][0]['y']
+        cv2.rectangle(self.currentImage, (x_min-int(0.1*width), y_max+int(0.1 * height)), (x_max+int(0.1*width), y_min-int(0.1*height)), color[prediction], 2)
 
-        x_neck = json_positions['body_part'][1]['x']
-        y_neck = json_positions['body_part'][1]['y']
-
-        x_0 = x_ear
-        y_0 = y_ear + (y_nose-y_neck)
-
-        width = 2*(x_nose-x_ear)
-        height = 2*(y_0-y_ear)
-
-        cv2.rectangle(self.currentImage, (x_0,y_0), (x_0+width, y_0-height), color[prediction], 2)
-        cv2.imshow("Labelised image", self.currentImage)
-        cv2.waitKey(1)
 
 
 

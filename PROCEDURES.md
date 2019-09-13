@@ -82,7 +82,7 @@ Here is an example of the structure of a json file for an image containing few p
 
 Originaly there are 18 body parts as you can see in the following image.
 
-<img src="assets/bodyParts.png" alt="bodyParts" width="250" style="margin: 20px 50%; transform:translateX(-50%)"/>
+<img src="assets/bodyParts.jpg" alt="bodyParts" width="250" style="margin: 20px 50%; transform:translateX(-50%)"/>
 
 ### 3. In order to process the json dataset, run the python script `processing/processing.py`
 
@@ -126,7 +126,7 @@ Person N    |   .   .   .   |   .   .   .   |           |    .    .    .   |    
 
 The training step follows the diagram below: 
 
-<img src="assets/training.jpg" alt="Training" width="250" style="margin: 20px 50%; transform:translateX(-50%)"/>
+<img src="assets/training.png" alt="Training" width="350" style="margin: 20px 50%; transform:translateX(-50%)"/>
 
 
 Once the pickle file is created from the processing step, the training can be run:

@@ -41,6 +41,10 @@ At this step we suppose you have an image dataset folder following the right str
 
 Now let's detect the human pose of these images. Since we are using relative path, all the program have to be executed from the main folder `DeepPoseIdentification/`
 
+The processing block pursues the following diagram :
+
+<img src="assets/processing.png" alt="Processing" width="250" style="margin: 20px 50%; transform:translateX(-50%)"/>
+
 ### 1. Activate the Ros service of OpenPose with:
 
 ```
@@ -78,7 +82,7 @@ Here is an example of the structure of a json file for an image containing few p
 
 Originaly there are 18 body parts as you can see in the following image.
 
-<img src="assets/bodyParts.jpg" alt="bodyParts" width="250" style="margin: 20px 50%; transform:translateX(-50%)"/>
+<img src="assets/bodyParts.png" alt="bodyParts" width="250" style="margin: 20px 50%; transform:translateX(-50%)"/>
 
 ### 3. In order to process the json dataset, run the python script `processing/processing.py`
 
@@ -120,6 +124,11 @@ Person N    |   .   .   .   |   .   .   .   |           |    .    .    .   |    
 
 # How to train your model and save it?
 
+The training step follows the diagram below: 
+
+<img src="assets/training.jpg" alt="Training" width="250" style="margin: 20px 50%; transform:translateX(-50%)"/>
+
+
 Once the pickle file is created from the processing step, the training can be run:
 
 ```
@@ -147,6 +156,11 @@ $ tensorboard --logdir="tensorboard/keras_model/[date of learning]"
 And open your browser on `http://localhost:6006/`, you will be able to see all the metrics of the neural network learning.
 
 # How to use your trained model to predict testing data?
+
+The prediction step follows the diagram below: 
+
+<img src="assets/prediction.png" alt="Prediction" width="250" style="margin: 20px 50%; transform:translateX(-50%)"/>
+
 
 Simply run the following command:
 

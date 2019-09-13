@@ -38,6 +38,8 @@ The number of neurons is set to 54. Considering that the number of features is a
 
 The activation function defines the output of a node given an input or set of inputs. They help neural networks (NN) introduce non-linearity. This means that the NN can successfully approximate functions which does not follow linearity or predict the class of a function which is divided by a decision boundary which is not linear. In our case, we chose `tanh`. It is very similar to sigmoid (suitable for classification) but has a stronger gradient meaning that the derivates are steeper and converge quicker.
 
+As a last activation function, we use `sigmoid`. It restricts the output value between 0 and 1 which for us indicates the label of output.
+
 - Optimiser
 
 The optimiser is used in NN to produce better and faster results when updating the parameters, weights and biases. In our case, we used an Adaptive Moment Estimation (Adam). It computes adaptive learning rates for each parameter. Adam works well in practice, it converges very fast. It also rectifies problems such as vanishing learning rate, slow convergence or high variance in the parameter updates. 
@@ -46,7 +48,11 @@ The optimiser is used in NN to produce better and faster results when updating t
 
 The number of epochs is a hyperparameter that defines the number of times that the learning algorithm will work trough the entire dataset. We set this number to 1000 using Tensorboard and looking when the metrics converge. 
 
-- Problems: Overfitting
+- Metrics
+
+The metrics are usefull to evaluate the network. In this case we are optimising on the loss function. More precisely, we use the binary cross entropy. It is suitable for classification problems such as ours.
+
+- Problem: Overfitting
 
 One of the main issues when training is overfitting. We detected that it was happening looking at the increase in the loss curve of the validation set over-time. 
 

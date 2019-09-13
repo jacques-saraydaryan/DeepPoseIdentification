@@ -93,7 +93,7 @@ class Training():
 
 		# serialize weights to HDF5
 		self.classifier.save_weights("model.h5")
-		print("\nModel train and saved as 'model.json' and 'model.h5'")
+		print("\nModel trained and saved as 'model.json', 'model.h5' and 'weights.best.hdf5'")
 
 
 	def plot_acc(self, all=None):

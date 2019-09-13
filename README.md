@@ -6,7 +6,21 @@ Detect human positions on 2D camera using OpenPose. Classify people on images ac
 
 ## Dataset
 
-The dataset comes from two different sources: internet and own images. Different proportions of this two sources are taken for the training.
+The dataset comes from two different sources: internet and own images. Different proportions of this two sources can be taken for the training.
+
+It follows this structure:
+
+<pre>
+imageDataset
+      |------------ google
+      |               |------------ focus
+      |               |------------ distract
+      |------------ perso
+                      |------------ focus
+                      |------------ distract
+</pre>
+
+It is composed of 453 images representing more than 1300 peoples.
 
 ## OpenPose
 
@@ -74,6 +88,10 @@ Then clone the projet using:
 ```
 $ git clone https://github.com/Pierre-Assemat/DeepPoseIdentification.git
 ```
+
+## Results
+
+Providing a video stream, the neural net is able to detect human position and labelised on the image itself if the person is focus or distract. It can handle multiple person at the same time and gives different label for each person on the same image.
 
 ## Contribution
 

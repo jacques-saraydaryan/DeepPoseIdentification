@@ -11,9 +11,11 @@ def renameFiles(path, mask):
     files = [f for f in glob.glob(path + "**/*.*",recursive=True)]
 
     print("Rename the following files: \n")
+    if mask:
+        mask = mask + '_'
 
     for i, file_path in enumerate(files):
-        newFileName = 'img_' + mask + '_' + str(i) + os.path.splitext(file_path)[1]
+        newFileName = 'img_' + mask + str(i) + os.path.splitext(file_path)[1]
         dest = os.path.join(os.path.dirname(file_path), newFileName)
         print(os.path.basename(file_path) , " -> ", newFileName)
         os.rename(file_path, dest)

@@ -144,7 +144,7 @@ if __name__ == '__main__':
 
     training = Training(args.path)
     training.split_data()
-    training.buildDNN(args.epochNb)
+    training.buildDNN(args.layerNb)
     training.train(args.epochNb)
     training.plot_all()
 

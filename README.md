@@ -56,7 +56,7 @@ Also, we added a regularisation term of 0.0007. Regularisation discourages learn
 
 Setting all this parameters, we achieve the following results: 
 
-<img src="assets/results.png" alt="Results" width="550" style="margin: 20px 50%; transform:translateX(-50%)"/>
+<img src="assets/result.png" alt="Results" width="550" style="margin: 20px 50%; transform:translateX(-50%)"/>
 
 
 

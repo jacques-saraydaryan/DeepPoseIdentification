@@ -40,7 +40,7 @@ In our specific case, the aim is to classify in two caterories: focus and distra
 
 The architecture of the network is the following:
 
-<img src="assets/neuralnet.png" alt="Neural network" width="550" style="margin: 20px 50%; transform:translateX(-50%)"/>
+<img src="assets/neural_net.png" alt="Neural network" width="550" style="margin: 20px 50%; transform:translateX(-50%)"/>
 
 
 We chose the parameter of the network in a way that the loss is minimal and the accuracy is maximal. We can tweak the number of fully-connected layers of the network, number of neurons, activation functions, the optimiser, number of epochs.

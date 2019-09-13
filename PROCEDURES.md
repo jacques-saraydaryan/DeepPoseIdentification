@@ -43,7 +43,7 @@ Now let's detect the human pose of these images. Since we are using relative pat
 
 The processing block pursues the following diagram :
 
-<img src="assets/processing.png" alt="Processing" width="250" style="margin: 20px 50%; transform:translateX(-50%)"/>
+<img src="assets/processing.png" alt="Processing" width="400" style="margin: 20px 50%; transform:translateX(-50%)"/>
 
 ### 1. Activate the Ros service of OpenPose with:
 
@@ -126,7 +126,7 @@ Person N    |   .   .   .   |   .   .   .   |           |    .    .    .   |    
 
 The training step follows the diagram below: 
 
-<img src="assets/training.png" alt="Training" width="350" style="margin: 20px 50%; transform:translateX(-50%)"/>
+<img src="assets/training.png" alt="Training" width="400" style="margin: 20px 50%; transform:translateX(-50%)"/>
 
 
 Once the pickle file is created from the processing step, the training can be run:
@@ -159,7 +159,7 @@ And open your browser on `http://localhost:6006/`, you will be able to see all t
 
 The prediction step follows the diagram below: 
 
-<img src="assets/prediction.png" alt="Prediction" width="250" style="margin: 20px 50%; transform:translateX(-50%)"/>
+<img src="assets/prediction.png" alt="Prediction" width="400" style="margin: 20px 50%; transform:translateX(-50%)"/>
 
 
 Simply run the following command:

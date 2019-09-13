@@ -25,6 +25,7 @@ It is composed of 453 images representing more than 1300 peoples.
 ## OpenPose
 
 [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) represents the first real-time multi-person system to jointly detect human body, hand, facial and foot keypoints (17 in our case) on a single image.
+In this project we are using a ros service which you can find in this repository: `https://github.com/jacques-saraydaryan/ros-openpose`. 
 
 ## Neural Network
 

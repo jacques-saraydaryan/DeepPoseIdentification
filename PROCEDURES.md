@@ -258,6 +258,7 @@ $ python predictions/prediction.py
 # How to use your trained model to predict a real time video stream?
 
 First activate the video stream ros service to send the stream on a channel using the command:
+The Ros service is comming from the github repository : `https://github.com/jacques-saraydaryan/ros-openpose`
 
 ```
 $ roslaunch openpose_ros_node videostream.launch
@@ -274,5 +275,5 @@ The model will be loaded from the `model.json` file and the weigths will be set 
 If you want to display the video stream in real time, you can also run the following command:
 
 ```
-rosrun rqt_image_view rqt_image_view
+$ rosrun rqt_image_view rqt_image_view
 ```

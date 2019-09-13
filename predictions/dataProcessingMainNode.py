@@ -29,24 +29,28 @@ class ProcessFocusUnfocusData():
         Image: Raw image stream
         '''
         self._bridge = CvBridge()
-        self.currentImage = None
 
         rospy.init_node('ProcessFocusUnfocusData', anonymous=True)
 
-        rospy.Subscriber("/openpose/pose", Persons, self.processOpenPoseJsonData)
-        rospy.Subscriber("/openpose/image_raw", Image, self.processOpenPoseImgData)
-        self._output_image_pub=rospy.Publisher("/deep_pose_identification/image_output",Image)
+        rospy.Subscriber("/openpose/pose_and_img", Persons, self.processOpenPoseJsonData)
 
-    def processOpenPoseJsonData(self, personObject):
+        self._output_image_pub = rospy.Publisher("/deep_pose_identification/image_output", Image)
+
+    def processOpenPoseJsonData(self, data):
         '''Callback run each time a new json position joints is received
         '''
         # Callback when openpose output received
         rospy.loginfo('[OPENPOSE_JSON] received data:')
 
+        ### TODO: Fix the publisher of '/openpose/pose_and_img' supposed to contain both the json_position object and the input image
+
+        currentImage = data.image
+        personObject = data.persons
+
         # Preprocess stream
-        h = self.currentImage.shape[0]
-        w = self.currentImage.shape[1]
-        
+        h = currentImage.shape[0]
+        w = currentImage.shape[1]
+
         json_positions = []
 
         # Reconstruct a python dict to add imageSize on each person
@@ -65,33 +69,30 @@ class ProcessFocusUnfocusData():
             })
 
         # Predict classes
-        predictionObject = Prediction()
+        self.predictionObject = Prediction()
+        data = self.predictionObject.preprocess(json_positions)
 
-        data = predictionObject.preprocess(json_positions)
+        # If no person is detected, just return the image raw
+        if len(data):
+            predictions = self.predictionObject.predict(data)
 
-        predictions = predictionObject.predict(data)
+            predictions = self.predictionObject.predictClasses(data)
 
-        predictions = predictionObject.predictClasses(data)
+            for i in range(len(predictions)):
+                print('Person %s' %str(i+1) + ' - ' + self.predictionObject.LABEL[predictions[i][0]])
+                self.postProcess(json_positions[i], int(predictions[i]))
 
-        for i in range(len(predictions)):
-            print('Person %s' %str(i+1) + ' - ' + predictionObject.LABEL[predictions[i][0]])
-            self.postProcess(json_positions[i], int(predictions[i]))
-
-
-        ros_msg_image=self._bridge.cv2_to_imgmsg(self.currentImage,'bgr8')
+        ros_msg_image = self._bridge.cv2_to_imgmsg(currentImage, 'bgr8')
         self._output_image_pub.publish(ros_msg_image)
-        
-        #cv2.imshow("Labelised image", self.currentImage)
-        #cv2.waitKey(1)
 
 
-    def postProcess(self, json_positions, prediction):
-        
+    def postProcess(self, json_positions, prediction, currentImage):
+
         #green for focus and red for distract
         color = [(0,255,0),(0,0,255)]
         x=[]
         y=[]
-       
+
         for i in range(len(json_positions['body_part'])):
             x_value = json_positions['body_part'][i]['x']
             y_value = json_positions['body_part'][i]['y']
@@ -104,21 +105,11 @@ class ProcessFocusUnfocusData():
         x_max = max(x)
         y_min = min(y)
         y_max =  max(y)   
-        
+
         width = x_max - x_min 
         height = y_max - y_min
 
-        cv2.rectangle(self.currentImage, (x_min-int(0.1*width), y_max+int(0.1 * height)), (x_max+int(0.1*width), y_min-int(0.1*height)), color[prediction], 2)
-
-
-
-
-    def processOpenPoseImgData(self, data):
-        '''Callback run each time a raw image is received
-        '''
-        frame = self._bridge.imgmsg_to_cv2(data, 'bgr8')
-        rospy.loginfo('[OPENPOSE_IMAGE] received img:')
-        self.currentImage = frame
+        cv2.rectangle(currentImage, (x_min, y_min - height/10), (x_max, y_max), color[prediction], 2)
 
 
 if __name__ == '__main__':

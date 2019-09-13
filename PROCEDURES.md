@@ -212,6 +212,8 @@ $ python training/training.py [--path] [--epochNb] [--layerNb]
 
 - `--layerNb`: The number of hidden layer which compose your network (5 by default).
 
+**Beware, the `weights.best.hdf5` will be override, make sure to make copy of it when your satisfy of the results in order to avoid loosing really good learning** 
+
 ### Example:
 
 - Command:

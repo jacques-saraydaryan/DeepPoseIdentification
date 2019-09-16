@@ -101,11 +101,11 @@ Providing a video stream, the neural net is able to detect human position and la
 
 ## Contribution
 - Developers
-      - Nina Tubau Ribera (Image Major)
-      - Pierre Assemat (Robotic Major)
+  - Nina Tubau Ribera (Image Major)
+  - Pierre Assemat (Robotic Major)
 - Under the supervision of:
-      - Raphael Leber
-      - Jacques Saraydaryan
+  - Raphael Leber
+  - Jacques Saraydaryan
       
 - Contributors :
 

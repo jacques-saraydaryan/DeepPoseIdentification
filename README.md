@@ -100,9 +100,14 @@ $ git clone https://github.com/Pierre-Assemat/DeepPoseIdentification.git
 Providing a video stream, the neural net is able to detect human position and labelised on the image itself if the person is focus or distract. It can handle multiple person at the same time and gives different label for each person on the same image.
 
 ## Contribution
-
-Nina Tubau Ribera (Image Major)
-Pierre Assemat (Robotic Major)
+- Developers
+      - Nina Tubau Ribera (Image Major)
+      - Pierre Assemat (Robotic Major)
+- Under the supervision of:
+      - Raphael Leber
+      - Jacques Saraydaryan
+      
+- Contributors :
 
 ## TO DO
 

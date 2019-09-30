@@ -11,7 +11,7 @@ import argparse
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
-from openpose_ros_msgs.msg import Persons, PersonDetection
+from openpose_ros_msgs.msg import Persons, PersonDetection,PersonsImgPose
 from openpose_ros_srvs.srv import DetectPeoplePoseFromImg
 
 import matplotlib.pyplot as plt
@@ -32,7 +32,7 @@ class ProcessFocusUnfocusData():
 
         rospy.init_node('ProcessFocusUnfocusData', anonymous=True)
 
-        rospy.Subscriber("/openpose/pose_and_img", Persons, self.processOpenPoseJsonData)
+        rospy.Subscriber("/openpose/pose_and_img", PersonsImgPose, self.processOpenPoseJsonData)
 
         self._output_image_pub = rospy.Publisher("/deep_pose_identification/image_output", Image)
 
@@ -44,11 +44,14 @@ class ProcessFocusUnfocusData():
 
         ### TODO: Fix the publisher of '/openpose/pose_and_img' supposed to contain both the json_position object and the input image
 
-        currentImage = data.image
+        #currentImage = data.image
+        currentImage= self._bridge.imgmsg_to_cv2( data.image, desired_encoding = "bgr8")
         personObject = data.persons
 
         # Preprocess stream
         h = currentImage.shape[0]
+        #h = currentImage.height
+        #w = currentImage.width
         w = currentImage.shape[1]
 
         json_positions = []
@@ -80,7 +83,7 @@ class ProcessFocusUnfocusData():
 
             for i in range(len(predictions)):
                 print('Person %s' %str(i+1) + ' - ' + self.predictionObject.LABEL[predictions[i][0]])
-                self.postProcess(json_positions[i], int(predictions[i]))
+                self.postProcess(json_positions[i], int(predictions[i]), currentImage)
 
         ros_msg_image = self._bridge.cv2_to_imgmsg(currentImage, 'bgr8')
         self._output_image_pub.publish(ros_msg_image)

@@ -70,7 +70,7 @@ The processing block pursues the following diagram :
 
 ### 1. Activate the Ros service of OpenPose with:
 
-See https://github.com/ildoonet/ros-openpose for more information about how to install it and how to run it.
+See https://github.com/jacques-saraydaryan/ros-openpose branch **deep_pose_identification_dev** for more information about how to install it and how to run it.
 
 ```
 $ roslaunch openpose_ros_node videostream.launch
